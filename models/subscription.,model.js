@@ -49,3 +49,7 @@ const subscriptionSchema = mongoose.Schema({
   },
   
 })
+
+const Subscription = mongoose.model('Subscription', subscriptionSchema)
+
+export default Subscription
