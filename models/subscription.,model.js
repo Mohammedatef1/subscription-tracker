@@ -21,25 +21,29 @@ const subscriptionSchema = mongoose.Schema({
     enum: ['daily', 'weekly', 'monthly', 'yearly'],
     required: [true, "frequency is required"]
   },
+  paymentMethod: {
+    type: String,
+    enum: true,
+    required: true
+  },
   startDate: {
     type: Date,
     required: [true, "start date is required"],
     validate: {
-      validator: (value) => {
-        if (value >= new Date.now()) {
-          throw new Error('start date must be in the past')
-        }
-      }
-    }
-  },
-  endDate: {
-    type: Date,
-    validate: {
-      validator: (value) => {
+      validator: function (value) {
         if (value < new Date.now()) {
           throw new Error('end date must be in the future')
         }
       }
+    }
+  },
+  renewalDate: {
+    type: Date,
+    validate: {
+      validator: function(value) {
+        return value > this.startDate;
+      },
+      message: "Renewal date must be greater than start date"
     }
   },
   status: {
@@ -47,7 +51,33 @@ const subscriptionSchema = mongoose.Schema({
     enum: ["active", "canceled", "expired"],
     default: "active"
   },
-  
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+    index: true
+  }
+})
+
+subscriptionSchema.pre('save', (next) => {
+  if(!this.renewalDate) {
+    const frequencyMap = {
+      daily: 1,
+      weekly: 7,
+      monthly: 30,
+      yearly: 365
+    }
+
+    const frequency = this.frequency;
+    this.renewalDate = new Date(this.startDate)
+    this.renewalDate.setDate( this.renewalDate.getDate() + frequencyMap[frequency])
+  }
+
+  if (this.renewalDate < new Date()) {
+    this.status = "expired"
+  }
+
+  next()
 })
 
 const Subscription = mongoose.model('Subscription', subscriptionSchema)
