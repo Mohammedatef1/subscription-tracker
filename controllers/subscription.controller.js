@@ -1,12 +1,15 @@
 import { BASE_URL } from "../config/env.js"
 import { workflow } from "../config/upstash.js"
 import Subscription from "../models/subscription.model.js"
+import User from "../models/user.model.js"
 
 export const createSubscription = async (req, res, next) => {
   try {
+    const user = await User.findById(req.user.userId).select("-password")
+
     const subscription = await Subscription.create({
       ...req.body,
-      user: req.user.userId
+      user: user
     })
 
     const { workflowRunId } = await workflow.trigger({
