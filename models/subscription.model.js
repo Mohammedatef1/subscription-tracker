@@ -23,7 +23,6 @@ const subscriptionSchema = mongoose.Schema({
   },
   paymentMethod: {
     type: String,
-    enum: true,
     required: true
   },
   startDate: {
@@ -31,8 +30,8 @@ const subscriptionSchema = mongoose.Schema({
     required: [true, "start date is required"],
     validate: {
       validator: function (value) {
-        if (value < new Date.now()) {
-          throw new Error('end date must be in the future')
+        if (value < new Date()) {
+          throw new Error('start date must be in the future')
         }
       }
     }
@@ -59,7 +58,7 @@ const subscriptionSchema = mongoose.Schema({
   }
 })
 
-subscriptionSchema.pre('save', (next) => {
+subscriptionSchema.pre('save', async function () {
   if(!this.renewalDate) {
     const frequencyMap = {
       daily: 1,
@@ -70,14 +69,17 @@ subscriptionSchema.pre('save', (next) => {
 
     const frequency = this.frequency;
     this.renewalDate = new Date(this.startDate)
-    this.renewalDate.setDate( this.renewalDate.getDate() + frequencyMap[frequency])
+
+    if (frequency === "monthly") {
+      this.renewalDate.setMonth(this.renewalDate.getMonth() + 1 )
+    } else {
+      this.renewalDate.setDate( this.renewalDate.getDate() + frequencyMap[frequency])
+    }
   }
 
   if (this.renewalDate < new Date()) {
     this.status = "expired"
   }
-
-  next()
 })
 
 const Subscription = mongoose.model('Subscription', subscriptionSchema)
