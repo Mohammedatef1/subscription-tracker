@@ -47,6 +47,9 @@ importers:
       morgan:
         specifier: ~1.9.1
         version: 1.9.1
+      nodemailer:
+        specifier: ^7.0.11
+        version: 7.0.11
     devDependencies:
       nodemon:
         specifier: ^3.1.11
@@ -558,6 +561,10 @@ packages:
   neverthrow@7.2.0:
     resolution: {integrity: sha512-iGBUfFB7yPczHHtA8dksKTJ9E8TESNTAx1UQWW6TzMF280vo9jdPYpLUXrMN1BCkPdHFdNG3fxOt2CUad8KhAw==}
     engines: {node: '>=18'}
+
+  nodemailer@7.0.11:
+    resolution: {integrity: sha512-gnXhNRE0FNhD7wPSCGhdNh46Hs6nm+uTyg+Kq0cZukNQiYdnCsoQjodNP9BQVG9XrcK/v6/MgpAPBUFyzh9pvw==}
+    engines: {node: '>=6.0.0'}
 
   nodemon@3.1.11:
     resolution: {integrity: sha512-is96t8F/1//UHAjNPHpbsNY46ELPpftGUoSVNXwUfMk/qdjSylYrWSu1XavVTBOn526kFiOR733ATgNBCQyH0g==}
@@ -1230,6 +1237,8 @@ snapshots:
   negotiator@0.6.3: {}
 
   neverthrow@7.2.0: {}
+
+  nodemailer@7.0.11: {}
 
   nodemon@3.1.11:
     dependencies:
