@@ -3,6 +3,25 @@ import { workflow } from "../config/upstash.js"
 import Subscription from "../models/subscription.model.js"
 import User from "../models/user.model.js"
 
+export const getAllSubscription = async (req, res, next) => {
+  try {
+    const {sort, fields, limit, page, ...queryObject } = req.query
+
+    const query = Subscription.find(queryObject);
+
+    const subscriptions = await query
+
+    res.status(200).json({
+      success: true,
+      message: "get all subscriptions successfully",
+      data: subscriptions
+    })
+
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const createSubscription = async (req, res, next) => {
   try {
     const user = await User.findById(req.user.userId).select("-password")
@@ -44,7 +63,11 @@ export const getUserSubscriptions = async (req, res, next) => {
       throw error
     }
 
-    const subscriptions = await Subscription.find({user : userId})
+    const {sort, fields, limit, page, ...queryObject} = req.query;
+    
+    const query = Subscription.find({user : userId, ...queryObject})
+
+    const subscriptions = await query
     
     res.status(200).json({
       success: true,
