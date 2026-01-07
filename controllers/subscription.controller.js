@@ -9,6 +9,13 @@ export const getAllSubscription = async (req, res, next) => {
 
     const query = Subscription.find(queryObject);
 
+    if (sort) {
+      const sortedBy = sort.split(',').join(" ")
+      query.sort(sortedBy)
+    } else {
+      query.sort('-createdAt')
+    }
+
     const subscriptions = await query
 
     res.status(200).json({
@@ -66,6 +73,13 @@ export const getUserSubscriptions = async (req, res, next) => {
     const {sort, fields, limit, page, ...queryObject} = req.query;
     
     const query = Subscription.find({user : userId, ...queryObject})
+
+    if (sort) {
+      const sortedBy = sort.split(',').join(" ")
+      query.sort(sortedBy)
+    } else {
+      query.sort('-createdAt')
+    }
 
     const subscriptions = await query
     
