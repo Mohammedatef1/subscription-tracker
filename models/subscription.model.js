@@ -56,6 +56,8 @@ const subscriptionSchema = mongoose.Schema({
     required: true,
     index: true
   }
+}, {
+  timestamps: true
 })
 
 subscriptionSchema.pre('save', async function () {
